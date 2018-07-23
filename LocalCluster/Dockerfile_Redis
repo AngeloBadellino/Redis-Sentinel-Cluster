@@ -1,0 +1,8 @@
+# Latest redis images
+FROM redis:4
+
+#Expose default redis port
+EXPOSE 6379
+
+# Partial overwrite the default redis.conf (https://redis.io/topics/notifications?utm_source=tool.lu)
+COPY ./LocalCluster/redis.conf /usr/local/etc/redis/redis.conf

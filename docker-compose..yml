@@ -1,0 +1,57 @@
+version: '3.4'
+
+services:
+  redis-master:
+    build:
+      context: .
+      dockerfile: LocalCluster/Dockerfile_Redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    sysctls:
+      - net.core.somaxconn=1024
+ 
+  redis-slave1:
+    build:
+      context: .
+      dockerfile: LocalCluster/Dockerfile_Redis
+    command: redis-server /usr/local/etc/redis/redis.conf --port 6380 --slaveof redis-master 6379
+    ports:
+      - "6380:6380"
+    links:
+      - redis-master
+    sysctls:
+      - net.core.somaxconn=1024
+
+  redis-slave2:
+    build:
+      context: .
+      dockerfile: LocalCluster/Dockerfile_Redis
+    command: redis-server /usr/local/etc/redis/redis.conf --port 6381 --slaveof redis-master 6379
+    ports:
+      - "6381:6381"
+    sysctls:
+      - net.core.somaxconn=1024
+    links:
+      - redis-master
+
+  redis-sentinel:
+    build:
+      context: .
+      dockerfile: LocalCluster/Dockerfile_Sentinel
+    links:
+    - redis-master
+
+  redis-sentinel2:
+    build:
+      context: .
+      dockerfile: LocalCluster/Dockerfile_Sentinel
+    links:
+      - redis-master
+
+  redis-sentinel3:
+    build:
+      context: .
+      dockerfile: LocalCluster/Dockerfile_Sentinel
+    links:
+      - redis-master
